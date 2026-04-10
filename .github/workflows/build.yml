@@ -17,9 +17,15 @@ jobs:
     - name: Build firmware (ESP32 DevKit V1)
       run: pio run -e ESP32-devKitv1
 
+    - name: List build files (debug)
+      run: ls -R .pio/build
+
     - name: Upload .bin files
       if: always()
       uses: actions/upload-artifact@v4
       with:
         name: esp32-bin
-        path: .pio/build/ESP32-devKitv1/*.bin
+        path: |
+          .pio/build/**/firmware.bin
+          .pio/build/**/bootloader.bin
+          .pio/build/**/partitions.bin
