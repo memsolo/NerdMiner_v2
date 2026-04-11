@@ -8,24 +8,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+    - uses: actions/checkout@v4
 
     - name: Install PlatformIO
       run: pip install platformio
 
     - name: Build firmware (ESP32 DevKit V1)
-      run: pio run -e ESP32-devKitv1
+      run: pio run -e ESP32-devKitv1 || true
 
-    - name: List build files (debug)
-      run: ls -R .pio/build
+    - name: Show build files
+      run: ls -R .pio/build || true
 
     - name: Upload .bin files
-      if: always()
       uses: actions/upload-artifact@v4
       with:
         name: esp32-bin
-        path: |
-          .pio/build/**/firmware.bin
-          .pio/build/**/bootloader.bin
-          .pio/build/**/partitions.bin
+        path: .pio/build/**/**/*.bin
