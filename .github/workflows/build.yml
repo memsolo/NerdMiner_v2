@@ -13,12 +13,24 @@ jobs:
     - name: Install PlatformIO
       run: pip install platformio
 
-    - name: Build firmware (ESP32 DevKit)
-      run: pio run -e esp32dev
+    # ✅ FIX: Clean broken cache
+    - name: Clean PlatformIO cache
+      run: |
+        rm -rf ~/.platformio/.cache
+        rm -rf ~/.platformio/packages
+        rm -rf ~/.platformio/platforms
 
-    - name: Upload firmware
-      if: always()
+    # ✅ Build only your board
+    - name: Build firmware (ESP32 DevKit V1)
+      run: pio run -e ESP32-devKitv1
+
+    # Debug (optional but helpful)
+    - name: Show build files
+      run: ls -R .pio/build
+
+    # ✅ Upload firmware
+    - name: Upload .bin files
       uses: actions/upload-artifact@v4
       with:
         name: esp32-bin
-        path: .pio/build/esp32dev/*.bin
+        path: .pio/build/**/**/*.bin
