@@ -11,24 +11,29 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: Install PlatformIO
-      run: pip install platformio
+      run: pip install -U platformio
 
-    # ✅ FIX: Clean broken cache
-    - name: Clean PlatformIO cache
+    # ✅ Clean everything (important)
+    - name: Clean PlatformIO
       run: |
-        rm -rf ~/.platformio/.cache
-        rm -rf ~/.platformio/packages
-        rm -rf ~/.platformio/platforms
+        rm -rf ~/.platformio
+        rm -rf .pio
 
-    # ✅ Build only your board
+    # ✅ FIX: Disable git metadata copying
+    - name: Fix git folder issue
+      run: |
+        export PLATFORMIO_DISABLE_PROGRESSBAR=true
+        export PLATFORMIO_SETTING_ENABLE_SYMLINKS=false
+
+    # ✅ Build
     - name: Build firmware (ESP32 DevKit V1)
       run: pio run -e ESP32-devKitv1
 
-    # Debug (optional but helpful)
-    - name: Show build files
+    # Debug (optional)
+    - name: Show build output
       run: ls -R .pio/build
 
-    # ✅ Upload firmware
+    # ✅ Upload
     - name: Upload .bin files
       uses: actions/upload-artifact@v4
       with:
